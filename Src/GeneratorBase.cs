@@ -1,4 +1,4 @@
-namespace FbsDumper.Sdk;
+namespace FbsDumper.SDK;
 
 public abstract class GeneratorBase(GenerationOptions options)
 {

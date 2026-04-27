@@ -1,4 +1,4 @@
-namespace FbsDumper.Sdk.Internal;
+namespace FbsDumper.SDK.Internal;
 
 internal sealed class TableInfoPayload
 {
