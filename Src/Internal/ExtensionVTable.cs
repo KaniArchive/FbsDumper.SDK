@@ -22,7 +22,8 @@ public unsafe struct ExtensionVTable
 
 public static class ExtensionAbi
 {
-    internal const string EntryPoint = "FbsDumperGetExtension";
+    public const string EntryPoint = "FbsDumperGetExtension";
+    public const int Version = 1;
 }
 
 internal static unsafe class ExtensionVTableHelpers
