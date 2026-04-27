@@ -1,4 +1,4 @@
-namespace FbsDumper.SDK;
+namespace FbsDumper.Sdk;
 
 public abstract class GeneratorBase(GenerationOptions options)
 {
@@ -7,7 +7,7 @@ public abstract class GeneratorBase(GenerationOptions options)
     public virtual string GetTableDecl(TableInfo table) =>
         $"table {table.TableName}";
 
-    public virtual string GetFieldDecl(FieldInfo field, string resolvedName, string resolvedType) =>
+    public virtual string GetFieldDecl(FieldInfo field, TableInfo table, string resolvedName, string resolvedType) =>
         $"\t{resolvedName}: {resolvedType}; // index 0x{field.Offset:X}";
 
     public virtual string? ResolveFieldType(string typeName, FieldInfo field, TableInfo table) => null;

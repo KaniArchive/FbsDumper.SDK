@@ -8,8 +8,6 @@ public abstract unsafe class ExtensionBase : IExtension
 {
     private static ExtensionBase? _instance;
     private static GeneratorBase? _generator;
-    private static GCHandle _nameHandle;
-    private static byte[]? _nameBytes;
 
     private static readonly ExtensionVTable VTable = new()
     {
@@ -45,7 +43,7 @@ public abstract unsafe class ExtensionBase : IExtension
     }
 
     [UnmanagedCallersOnly(EntryPoint = ExtensionAbi.EntryPoint)]
-    public static void* FbsDumperGetExtension()
+    public static ExtensionVTable* FbsDumperGetExtension()
     {
         fixed (ExtensionVTable* p = &VTable) return p;
     }
@@ -57,10 +55,9 @@ public abstract unsafe class ExtensionBase : IExtension
     private static byte* VTableGetName()
     {
         if (_instance == null) return (byte*)0;
-        if (_nameHandle.IsAllocated) _nameHandle.Free();
-        _nameBytes = Encoding.UTF8.GetBytes(_instance.Name + "\0");
-        _nameHandle = GCHandle.Alloc(_nameBytes, GCHandleType.Pinned);
-        return (byte*)_nameHandle.AddrOfPinnedObject();
+        var bytes = Encoding.UTF8.GetBytes(_instance.Name + "\0");
+        NameHandle.Target = bytes;
+        return (byte*)NameHandle.AddrOfPinnedObject();
     }
 
     [UnmanagedCallersOnly]
@@ -118,15 +115,16 @@ public abstract unsafe class ExtensionBase : IExtension
     }
 
     [UnmanagedCallersOnly]
-    private static void VTableGeneratorGetFieldDecl(byte* fieldJson, byte* namePtr, byte* typePtr, byte** outStr, int* outLen)
+    private static void VTableGeneratorGetFieldDecl(byte* fieldJson, byte* tableJson, byte* namePtr, byte* typePtr, byte** outStr, int* outLen)
     {
         *outStr = null;
         if (_generator == null) return;
         var field = ExtensionVTableHelpers.Decode<FieldInfoPayload>(fieldJson)?.ToFieldInfo();
-        if (field == null) return;
+        var table = ExtensionVTableHelpers.Decode<TableInfoPayload>(tableJson)?.ToTableInfo();
+        if (field == null || table == null) return;
         var name = ExtensionVTableHelpers.DecodeString(namePtr) ?? field.Name;
         var type = ExtensionVTableHelpers.DecodeString(typePtr) ?? field.Type.Name;
-        var result = _generator.GetFieldDecl(field, name, type);
+        var result = _generator.GetFieldDecl(field, table, name, type);
         *outStr = ExtensionVTableHelpers.AllocUtf8(result);
         *outLen = Encoding.UTF8.GetByteCount(result);
     }

@@ -6,7 +6,7 @@ using System.Text.Json.Serialization;
 namespace FbsDumper.SDK.Internal;
 
 [StructLayout(LayoutKind.Sequential)]
-public unsafe struct ExtensionVTable
+internal unsafe struct ExtensionVTable
 {
     public delegate* unmanaged<byte*> GetName;
     public delegate* unmanaged<bool> HasGenerator;
@@ -15,7 +15,7 @@ public unsafe struct ExtensionVTable
     public delegate* unmanaged<byte*, void> OnEnumBuilt;
     public delegate* unmanaged<byte*, void> InitGenerator;
     public delegate* unmanaged<byte*, byte**, int*, void> GeneratorGetTableDecl;
-    public delegate* unmanaged<byte*, byte*, byte*, byte**, int*, void> GeneratorGetFieldDecl;
+    public delegate* unmanaged<byte*, byte*, byte*, byte*, byte**, int*, void> GeneratorGetFieldDecl;
     public delegate* unmanaged<byte*, byte*, byte*, byte**, int*, void> GeneratorResolveFieldType;
     public delegate* unmanaged<byte*, void> FreeBuffer;
 }
@@ -23,7 +23,6 @@ public unsafe struct ExtensionVTable
 public static class ExtensionAbi
 {
     public const string EntryPoint = "FbsDumperGetExtension";
-    public const int Version = 1;
 }
 
 internal static unsafe class ExtensionVTableHelpers
