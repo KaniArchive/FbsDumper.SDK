@@ -23,8 +23,7 @@ public abstract unsafe class ExtensionBase : IExtension
         FreeBuffer = &VTableFreeBuffer,
     };
 
-    private static readonly GCHandle NameHandle =
-        GCHandle.Alloc(Array.Empty<byte>(), GCHandleType.Pinned);
+    private static GCHandle NameHandle = GCHandle.Alloc(Array.Empty<byte>(), GCHandleType.Pinned);
 
     public abstract string Name { get; }
     public virtual bool HasCustomGenerator => false;
