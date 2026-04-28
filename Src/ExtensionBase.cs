@@ -20,18 +20,13 @@ public abstract unsafe class ExtensionBase : IExtension
         GeneratorGetTableDecl = &VTableGeneratorGetTableDecl,
         GeneratorGetFieldDecl = &VTableGeneratorGetFieldDecl,
         GeneratorResolveFieldType = &VTableGeneratorResolveFieldType,
-        FreeBuffer = &VTableFreeBuffer,
+        FreeBuffer = &VTableFreeBuffer
     };
 
-    private static GCHandle NameHandle = GCHandle.Alloc(Array.Empty<byte>(), GCHandleType.Pinned);
+    private static GCHandle _nameHandle = GCHandle.Alloc(Array.Empty<byte>(), GCHandleType.Pinned);
+    protected virtual bool HasCustomGenerator => false;
 
     public abstract string Name { get; }
-    public virtual bool HasCustomGenerator => false;
-
-    public virtual void OnTableBuilt(TableInfo table, TypeMetadata type) { }
-    public virtual void OnSchemaBuilt(SchemaInfo schema) { }
-    public virtual void OnEnumBuilt(EnumInfo enumInfo, TypeMetadata type) { }
-    public virtual GeneratorBase? CreateGenerator(GenerationOptions opts) => null;
 
     public virtual void Register(ExtensionContext context)
     {
@@ -41,10 +36,27 @@ public abstract unsafe class ExtensionBase : IExtension
         context.CreateGenerator = CreateGenerator;
     }
 
+    protected virtual void OnTableBuilt(TableInfo table, TypeMetadata type)
+    {
+    }
+
+    protected virtual void OnSchemaBuilt(SchemaInfo schema)
+    {
+    }
+
+    protected virtual void OnEnumBuilt(EnumInfo enumInfo, TypeMetadata type)
+    {
+    }
+
+    protected virtual GeneratorBase? CreateGenerator(GenerationOptions opts) => null;
+
     [UnmanagedCallersOnly(EntryPoint = ExtensionAbi.EntryPoint)]
     public static ExtensionVTable* FbsDumperGetExtension()
     {
-        fixed (ExtensionVTable* p = &VTable) return p;
+        fixed (ExtensionVTable* p = &VTable)
+        {
+            return p;
+        }
     }
 
     protected static void SetInstance(ExtensionBase instance) =>
@@ -55,8 +67,8 @@ public abstract unsafe class ExtensionBase : IExtension
     {
         if (_instance == null) return (byte*)0;
         var bytes = Encoding.UTF8.GetBytes(_instance.Name + "\0");
-        NameHandle.Target = bytes;
-        return (byte*)NameHandle.AddrOfPinnedObject();
+        _nameHandle.Target = bytes;
+        return (byte*)_nameHandle.AddrOfPinnedObject();
     }
 
     [UnmanagedCallersOnly]
@@ -114,7 +126,8 @@ public abstract unsafe class ExtensionBase : IExtension
     }
 
     [UnmanagedCallersOnly]
-    private static void VTableGeneratorGetFieldDecl(byte* fieldJson, byte* tableJson, byte* namePtr, byte* typePtr, byte** outStr, int* outLen)
+    private static void VTableGeneratorGetFieldDecl(byte* fieldJson, byte* tableJson, byte* namePtr, byte* typePtr,
+        byte** outStr, int* outLen)
     {
         *outStr = null;
         if (_generator == null) return;
@@ -129,7 +142,8 @@ public abstract unsafe class ExtensionBase : IExtension
     }
 
     [UnmanagedCallersOnly]
-    private static void VTableGeneratorResolveFieldType(byte* typeNamePtr, byte* fieldJson, byte* tableJson, byte** outStr, int* outLen)
+    private static void VTableGeneratorResolveFieldType(byte* typeNamePtr, byte* fieldJson, byte* tableJson,
+        byte** outStr, int* outLen)
     {
         *outStr = null;
         if (_generator == null) return;

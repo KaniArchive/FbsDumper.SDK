@@ -1,8 +1,8 @@
 namespace FbsDumper.SDK;
 
-public abstract class GeneratorBase(GenerationOptions options)
+public abstract class GeneratorBase(GenerationOptions? options)
 {
-    protected GenerationOptions Options { get; } = options;
+    protected GenerationOptions? Options { get; } = options;
 
     public virtual string GetTableDecl(TableInfo table) =>
         $"table {table.TableName}";

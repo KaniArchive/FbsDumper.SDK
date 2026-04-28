@@ -14,5 +14,5 @@ public enum EnumOutMode
 {
     Inline,
     Separate,
-    Omit,
+    Omit
 }

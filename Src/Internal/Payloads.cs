@@ -18,7 +18,7 @@ internal sealed class TableInfoPayload
             TableName = TableName,
             OriginalNamespace = OriginalNamespace,
             NoCreate = NoCreate,
-            Fields = Fields.Select(f => f.ToFieldInfo()).ToList(),
+            Fields = Fields.Select(f => f.ToFieldInfo()).ToList()
         };
         foreach (var kv in Metadata) table.Metadata[kv.Key] = kv.Value;
         return table;
@@ -31,10 +31,10 @@ internal sealed class TableInfoPayload
             Name = f.Name,
             FieldType = f.FieldType,
             IsPublic = f.IsPublic,
-            IsStatic = f.IsStatic,
+            IsStatic = f.IsStatic
         }).ToList(),
         Interfaces = Interfaces,
-        CustomAttributes = CustomAttributes,
+        CustomAttributes = CustomAttributes
     };
 
     public void SyncMetadataFrom(TableInfo table)
@@ -56,7 +56,7 @@ internal sealed class FieldInfoPayload
         Name = Name,
         Offset = Offset,
         IsArray = IsArray,
-        Type = Type.ToTypeInfo(),
+        Type = Type.ToTypeInfo()
     };
 }
 
@@ -72,7 +72,7 @@ internal sealed class TypeInfoPayload
         Name = Name,
         Namespace = Namespace,
         FullName = FullName,
-        IsEnum = IsEnum,
+        IsEnum = IsEnum
     };
 }
 
@@ -92,7 +92,7 @@ internal sealed class SchemaInfoPayload
     public SchemaInfo ToSchemaInfo() => new()
     {
         Tables = Tables.Select(t => t.ToTableInfo()).ToList(),
-        Enums = Enums.Select(e => e.ToEnumInfo()).ToList(),
+        Enums = Enums.Select(e => e.ToEnumInfo()).ToList()
     };
 }
 
@@ -111,7 +111,7 @@ internal sealed class EnumInfoPayload
         EnumName = EnumName,
         OriginalNamespace = OriginalNamespace,
         Type = Type.ToTypeInfo(),
-        Fields = Fields.Select(f => new EnumFieldInfo { Name = f.Name, Value = f.Value }).ToList(),
+        Fields = Fields.Select(f => new EnumFieldInfo { Name = f.Name, Value = f.Value }).ToList()
     };
 
     public TypeMetadata ToTypeMetadata() => new()
@@ -121,10 +121,10 @@ internal sealed class EnumInfoPayload
             Name = f.Name,
             FieldType = f.FieldType,
             IsPublic = f.IsPublic,
-            IsStatic = f.IsStatic,
+            IsStatic = f.IsStatic
         }).ToList(),
         Interfaces = Interfaces,
-        CustomAttributes = CustomAttributes,
+        CustomAttributes = CustomAttributes
     };
 }
 
@@ -151,10 +151,10 @@ internal sealed class GenerationOptionsPayload
         {
             "Separate" => EnumOutMode.Separate,
             "Omit" => EnumOutMode.Omit,
-            _ => EnumOutMode.Inline,
+            _ => EnumOutMode.Inline
         },
         ForceSnakeCase = ForceSnakeCase,
         IsSplitMode = IsSplitMode,
-        SkipDuplicates = SkipDuplicates,
+        SkipDuplicates = SkipDuplicates
     };
 }
