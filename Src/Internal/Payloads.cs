@@ -18,7 +18,7 @@ internal sealed class TableInfoPayload
             TableName = TableName,
             OriginalNamespace = OriginalNamespace,
             NoCreate = NoCreate,
-            Fields = Fields.Select(f => f.ToFieldInfo()).ToList()
+            Fields = [.. Fields.Select(f => f.ToFieldInfo())]
         };
         foreach (var kv in Metadata) table.Metadata[kv.Key] = kv.Value;
         return table;
@@ -26,13 +26,13 @@ internal sealed class TableInfoPayload
 
     public TypeMetadata ToTypeMetadata() => new()
     {
-        StaticFields = StaticFields.Select(f => new TypeFieldInfo
+        StaticFields = [.. StaticFields.Select(f => new TypeFieldInfo
         {
             Name = f.Name,
             FieldType = f.FieldType,
             IsPublic = f.IsPublic,
             IsStatic = f.IsStatic
-        }).ToList(),
+        })],
         Interfaces = Interfaces,
         CustomAttributes = CustomAttributes
     };
@@ -91,8 +91,8 @@ internal sealed class SchemaInfoPayload
 
     public SchemaInfo ToSchemaInfo() => new()
     {
-        Tables = Tables.Select(t => t.ToTableInfo()).ToList(),
-        Enums = Enums.Select(e => e.ToEnumInfo()).ToList()
+        Tables = [.. Tables.Select(t => t.ToTableInfo())],
+        Enums = [.. Enums.Select(e => e.ToEnumInfo())]
     };
 }
 
@@ -111,18 +111,18 @@ internal sealed class EnumInfoPayload
         EnumName = EnumName,
         OriginalNamespace = OriginalNamespace,
         Type = Type.ToTypeInfo(),
-        Fields = Fields.Select(f => new EnumFieldInfo { Name = f.Name, Value = f.Value }).ToList()
+        Fields = [.. Fields.Select(f => new EnumFieldInfo { Name = f.Name, Value = f.Value })]
     };
 
     public TypeMetadata ToTypeMetadata() => new()
     {
-        StaticFields = StaticFields.Select(f => new TypeFieldInfo
+        StaticFields = [.. StaticFields.Select(f => new TypeFieldInfo
         {
             Name = f.Name,
             FieldType = f.FieldType,
             IsPublic = f.IsPublic,
             IsStatic = f.IsStatic
-        }).ToList(),
+        })],
         Interfaces = Interfaces,
         CustomAttributes = CustomAttributes
     };
